@@ -1,0 +1,12 @@
+<Configure id="Server" class="org.eclipse.jetty.server.Server">
+    <Set name="connectors">
+        <Array type="org.eclipse.jetty.server.Connector">
+            <Item>
+                <New class="org.eclipse.jetty.server.ServerConnector">
+                    <Arg name="server" />
+                    <Set name="idleTimeout">600000</Set> <!-- Timeout 10 dəqiqə (600000 ms) -->
+                </New>
+            </Item>
+        </Array>
+    </Set>
+</Configure>
