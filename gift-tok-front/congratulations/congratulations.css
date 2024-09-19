@@ -1,0 +1,99 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f4f4f4;
+}
+
+/* Kartın genişliği ve yüksekliği masaüstü için sabit */
+.reward-card {
+    width: 300px; /* Masaüstü için kart genişliği */
+    height: 300px; /* Masaüstü için kart yüksekliği */
+    background-image: url('../image/BG elements copy.png'); /* Arka plan resmi */
+    background-size: contain; /* Resmi kutunun içine tam sığdırır */
+    background-position: center center; /* Resim merkezde yer alır */
+    background-repeat: no-repeat; /* Resim tekrarlanmaz */
+    background-color: rgba(0, 206, 201, 0.9); /* Şeffaf arka plan rengi */
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column; /* Dikey düzen */
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.message-container h2 {
+    color: white;
+    font-size: 32px; /* Başlık boyutu */
+    margin: 0;
+    padding: 0;
+}
+
+.profile-container {
+    display: flex;
+    flex-direction: row; /* Yan yana düzen */
+    align-items: center; /* Resim ve kullanıcı adının ortada hizalanması */
+    margin-top: 20px; /* Mesaj ile profil arasında boşluk */
+}
+
+.profile-container img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white; /* Profil resmine beyaz çerçeve */
+    margin-right: 10px; /* Resim ve kullanıcı adı arasında boşluk */
+}
+
+.username {
+    font-size: 22px; /* Kullanıcı adı yazı boyutu */
+    color: black;
+    font-weight: bold;
+}
+
+.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+.dark-mode .profile-container img {
+    border-color: #00cec9;
+}
+
+/* Mobil cihazlar için medya sorgusu (414px genişlik, 280.32px yükseklik) */
+@media (max-width: 600px) {
+    .reward-card {
+        width: 414px; /* Tam genişlik */
+        height: 280.32px; /* Sabit yükseklik */
+        padding: 15px; /* Mobilde daha küçük padding */
+        border-radius: 0; /* Kenar yuvarlamalarını kaldır */
+        box-shadow: none; /* Mobilde gölgeyi kaldır */
+        max-width: 100%; /* Genişliği ekran boyutuna sığdır */
+    }
+
+    .message-container h2 {
+        font-size: 24px; /* Başlık boyutu mobil için */
+    }
+
+    .profile-container {
+        flex-direction: column; /* Mobilde dikey hizalama */
+        margin-top: 10px;
+    }
+
+    .profile-container img {
+        width: 50px; /* Mobilde daha küçük resim */
+        height: 50px;
+        margin-right: 0;
+        margin-bottom: 10px; /* Mobilde alt boşluk */
+    }
+
+    .username {
+        font-size: 18px;
+        text-align: center;
+    }
+}

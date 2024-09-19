@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Milestone Input</title>
+    <link rel="stylesheet" href="milestone.css">
+</head>
+<body>
+<div class="container">
+
+    <div class="milestone-form">
+        <h3>Please enter your milestone here</h3>
+        <div class="milestone-scroll">
+            <div id="milestone-container">
+                <div class="milestone" id="milestone1">
+                    <label>1</label>
+                    <input type="text" placeholder="Milestone" class="milestone-input" id="milestone1-input">
+                    <input type="text" placeholder="Likes" class="like-input" id="likes1-input">
+                    <button class="add-btn" onclick="addMilestone()">+</button>
+                </div>
+
+            </div>
+        </div>
+        <button class="save-btn" onclick="saveMilestones()">Save</button>
+    </div>
+</div>
+
+<script src="milestone.js"></script>
+</body>
+</html>

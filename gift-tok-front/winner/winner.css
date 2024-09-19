@@ -1,0 +1,144 @@
+
+
+/* Genel body ayarları */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+    box-sizing: border-box;
+}
+
+/* Kartın genişliği masaüstü için sabit */
+.reward-card {
+    width: 360px; /* Masaüstünde sabit genişlik */
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    text-align: center;
+    margin: 0 auto;
+    overflow: hidden; /* İçeriğin taşmasını engelle */
+}
+
+/* İçeriklerin sabit kalması için boyutlar */
+.reward-content h2 {
+    color: #06b216;
+    font-size: 24px;
+    margin-bottom: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Hediye kutusu sabit kalacak */
+.giftbox {
+    width: 150px; /* Sabit genişlik, mobilde de değişmez */
+    margin: 10px auto;
+    position: relative;
+}
+
+.giftbox img {
+    width: 100%;
+    height: auto;
+}
+
+/* Kullanıcı profil alanı */
+.user-profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+.prize {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 24px;
+    opacity: 0;
+}
+
+/* Profil resmi sabit kalacak */
+.user-profile img {
+    width: 40px; /* Sabit genişlik */
+    height: 40px; /* Sabit yükseklik */
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+/* Kullanıcı adı */
+.username {
+    font-size: 16px;
+    color: #333;
+    white-space: nowrap; /* Tek satırda kalmasını sağla */
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Dark Mode Styling */
+.dark-mode {
+    background-color: #121212;
+    color: white;
+}
+
+.dark-mode .reward-card {
+    background-color: #1e1e1e;
+    color: white;
+}
+
+.dark-mode .reward-content h2 {
+    color: #00cec9;
+}
+
+.dark-mode .giftbox img {
+    filter: brightness(0.9);
+}
+
+.dark-mode .user-profile {
+    background-color: #444;
+}
+
+.dark-mode .username {
+    color: white;
+}
+
+/* Mobil cihazlar için medya sorgusu */
+@media (max-width: 600px) {
+    .reward-card {
+        width: 100vw; 
+        height: 340px;
+        /* Tam genişlik, viewport genişliği kadar */
+        padding: 15px;
+        max-width: none; /* Sınırlama yok */
+        border-radius: 0; /* Kenarlardaki yuvarlamayı kaldır */
+        margin: 0; /* Kenar boşluklarını kaldır */
+    }
+
+    /* İçeriklerin mobilde sabit kalmasını sağlamak */
+    .reward-content h2 {
+        font-size: 20px;
+    }
+
+    .giftbox {
+        width: 120px; /* Mobil için sabit genişlik */
+    }
+
+    .user-profile img {
+        width: 40px;
+        height: 40px;
+    }
+    .prize {
+        font-size: 20px;
+    }
+}

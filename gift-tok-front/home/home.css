@@ -1,0 +1,147 @@
+/* Body Styles */
+body {
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, color 0.3s;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Full height */
+    background-color: #f4f4f4;
+    box-sizing: border-box;
+}
+
+/* Container to center content vertically */
+.container {
+    text-align: center;
+    margin-top: 50px;
+    max-width: 360px; /* Sabit genişlik */
+    width: 100%; /* Mobil uyumlu genişlik */
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Logo Container */
+.logo {
+    position: relative;
+    width: 100%; /* Make logo responsive */
+    max-width: 350px; /* Limit logo width */
+    height: auto; /* Maintain aspect ratio */
+    margin-bottom: 20px; /* Add space between logo and buttons */
+}
+
+.logo img {
+    width: 100%; /* Make the image fill the container */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Mood Switcher Container */
+.mood-switcher {
+    margin: 20px 0;
+    display: flex;
+    gap: 10px;
+}
+
+/* Mood Buttons */
+.mood-btn {
+    padding: 10px 30px;
+    border: 2px solid #000;
+    background-color: transparent;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 25px;
+    transition: background-color 0.3s, color 0.3s;
+    color: #000; /* Text color */
+}
+
+.mood-btn:hover {
+    background-color: #f1f1f1;
+}
+
+/* Create Game Button */
+.create-game-btn {
+    padding: 15px 60px;
+    font-size: 18px;
+    background-color: #00cec9;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.create-game-btn:hover {
+    background-color: #00b1a0;
+}
+
+/* Dark Mode Styling */
+.dark-mode {
+    background-color: #121212; /* Dark mode background color */
+    color: white; /* Text color for dark mode */
+}
+
+.dark-mode .container {
+    background-color: #1e1e1e; /* Darker background for the container */
+    color: white;
+}
+
+.dark-mode .create-game-btn {
+    background-color: #00b1a0; /* Darker button background */
+}
+
+.dark-mode .create-game-btn:hover {
+    background-color: #008a7c; /* Even darker hover */
+}
+
+.dark-mode .mood-btn {
+    background-color: transparent; /* Transparent background for buttons */
+    color: white; /* White text in dark mode */
+    border-color: white; /* White border in dark mode */
+}
+
+.dark-mode .mood-btn:hover {
+    background-color: #333; /* Darker hover effect */
+}
+
+/* Mobil uyumluluk için medya sorgusu */
+@media (max-width: 600px) {
+    .container {
+        height: 340px;
+        max-width: 100%; /* Mobilde ekran genişliğine göre ayarlanır */
+        margin-top: 20px; /* Üst boşluk azaltıldı */
+        padding: 15px;
+    }
+
+    .logo {
+        width: 250px; /* Logo genişliği mobil için küçültüldü */
+        margin-bottom: 15px;
+    }
+
+    .mood-switcher {
+        flex-direction: column; /* Butonları dikey hizala */
+        gap: 15px; /* Aralarındaki boşluk arttırıldı */
+    }
+
+    .mood-btn {
+        padding: 8px 20px; /* Daha küçük buton boyutları */
+        font-size: 14px; /* Daha küçük yazı boyutu */
+    }
+
+    .create-game-btn {
+        padding: 12px 40px; /* Buton boyutu küçültüldü */
+        font-size: 16px; /* Daha küçük yazı boyutu */
+    }
+
+    .mood-btn, .create-game-btn {
+        width: 100%; /* Mobilde tam genişlikte olsun */
+        max-width: 300px; /* Genişliği sınırla */
+    }
+}
