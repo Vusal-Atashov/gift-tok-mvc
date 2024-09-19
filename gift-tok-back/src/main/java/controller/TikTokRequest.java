@@ -49,14 +49,15 @@ public class TikTokRequest {
     private static final int BATCH_SIZE = 10;
     private final ScheduledExecutorService scheduler;
     private final BlockingQueue<Like> likeQueue = new LinkedBlockingQueue<>();
-    private boolean isTracking = true;  // İzləmə bayrağı
+    private boolean isTracking = true;
+    private boolean isConverted = true;
 
     public TikTokRequest() {
         this.userService = new UserServiceImpl(new UserRepositoryImpl());
         this.likeService = new LikeServiceImpl(new LikeRepositoryImpl());
         this.giftService = new GiftServiceImpl(new GiftRepositoryImpl());
         this.winnerSelectionService = new WinnerSelectionServiceImpl(giftService, likeService, userService, new WinningChanceRepositoryImpl());
-        this.client = TikTokLive.newClient("raya.090_");
+        this.client = TikTokLive.newClient("ceyhun_berdeli__official");
         this.totalLikes = new AtomicInteger(0);  // totalLikes üçün düzgün təşkiledici
         scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(this::updateChances, 0, 20, TimeUnit.SECONDS);
@@ -67,8 +68,10 @@ public class TikTokRequest {
         int retryDelay = 5000;
         for (int i = 0; i < maxRetries; i++) {
             try {
-                client.buildAndConnect();
-                System.out.println("Successfully connected to TikTok Live.");
+                if (isConverted) {
+                    client.buildAndConnect();
+                    System.out.println("Successfully connected to TikTok Live.");
+                }
                 setupListeners();
                 break;
             } catch (Exception e) {
@@ -240,15 +243,18 @@ public class TikTokRequest {
 
     public void startTracking() {
         System.out.println("TikTok tracking started...");
-        isTracking= true;
+        isTracking = true;
         resetDatabase();
-        connectClient();
+        if (isConverted) {
+            connectClient();
+        }
     }
 
     public void stopTracking() {
         System.out.println("TikTok tracking stopped...");
 
         isTracking = false;
+        isConverted = false;
 
         try {
             client.build().disconnect();

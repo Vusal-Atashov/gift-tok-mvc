@@ -130,9 +130,5 @@ public class GiftRepositoryImpl implements GiftRepository {
         return Optional.empty();
     }
 
-    public static void main(String[] args) {
-        GiftRepository giftRepository = new GiftRepositoryImpl();
 
-        System.out.println(giftRepository.findAllByUserId(16));
-    }
 }
