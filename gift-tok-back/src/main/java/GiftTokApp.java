@@ -9,21 +9,22 @@ public class GiftTokApp {
         // Serverin qurulması
         Server server = new Server();
         ServerConnector connector = new ServerConnector(server);
+        connector.setHost("0.0.0.0");  // Tüm arayüzlerde dinleme
         connector.setPort(8080);
         connector.setIdleTimeout(600000);
         server.addConnector(connector);
 
-        // Kontekst və ServletHolder qurulması
+        // Kontekst ve ServletHolder kurulması
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");
         server.setHandler(context);
 
-        // TikTokControllerServlet sinifinin Jetty serverə əlavə edilməsi
+        // TikTokControllerServlet sınıfının Jetty sunucusuna eklenmesi
         context.addServlet(new ServletHolder(new TikTokControllerServlet()), "/api/v1/*");
 
-        // Serverin işə salınması
+        // Sunucunun başlatılması
         server.start();
-        System.out.println("Server started at http://localhost:8080");
+        System.out.println("Sunucu http://0.0.0.0:8080 adresinde başlatıldı");
         server.join();
     }
 }

@@ -36,8 +36,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TikTokRequest {
+
+    private static final Logger logger = LoggerFactory.getLogger(TikTokRequest.class); // SLF4J Logger
 
     private final UserService userService;
     private final LikeService likeService;
@@ -57,7 +61,7 @@ public class TikTokRequest {
         this.likeService = new LikeServiceImpl(new LikeRepositoryImpl());
         this.giftService = new GiftServiceImpl(new GiftRepositoryImpl());
         this.winnerSelectionService = new WinnerSelectionServiceImpl(giftService, likeService, userService, new WinningChanceRepositoryImpl());
-        this.client = TikTokLive.newClient("ceyhun_berdeli__official");
+        this.client = TikTokLive.newClient("semka__live");
         this.totalLikes = new AtomicInteger(0);  // totalLikes üçün düzgün təşkiledici
         scheduler = Executors.newScheduledThreadPool(1);
         scheduler.scheduleAtFixedRate(this::updateChances, 0, 20, TimeUnit.SECONDS);
@@ -70,20 +74,20 @@ public class TikTokRequest {
             try {
                 if (isConverted) {
                     client.buildAndConnect();
-                    System.out.println("Successfully connected to TikTok Live.");
+                    logger.info("Successfully connected to TikTok Live.");
                 }
                 setupListeners();
                 break;
             } catch (Exception e) {
-                System.out.println("Failed to connect to TikTok Live: " + e.getMessage());
+                logger.error("Failed to connect to TikTok Live: {}", e.getMessage());
                 if (i < maxRetries - 1) {
                     try {
                         Thread.sleep(retryDelay);
                     } catch (InterruptedException interruptedException) {
-                        interruptedException.printStackTrace();
+                        logger.error("Interrupted during retry delay: {}", interruptedException.getMessage());
                     }
                 } else {
-                    System.out.println("Maximum retry attempts reached. Could not connect.");
+                    logger.error("Maximum retry attempts reached. Could not connect.");
                 }
             }
         }
@@ -109,7 +113,7 @@ public class TikTokRequest {
                 try {
                     String name = event.getUser().getName();
                     long likes = event.getLikes();
-                    System.out.println("Like added: " + likes + " by " + name);
+                    logger.info("Like added: {} by {}", likes, name);
 
                     Users user = userService.findUserByName(name);
                     if (user != null && user.getId() != null) {
@@ -129,7 +133,7 @@ public class TikTokRequest {
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("Error processing likes: " + e.getMessage());
+                    logger.error("Error processing likes: {}", e.getMessage());
                 }
             });
         });
@@ -144,7 +148,7 @@ public class TikTokRequest {
                 for (Like like : batch) {
                     likeService.saveLike(like);
                 }
-                System.out.println("Processed batch of likes: " + batch.size());
+                logger.info("Processed batch of likes: {}", batch.size());
             });
         }
     }
@@ -159,7 +163,7 @@ public class TikTokRequest {
                     String name = event.getUser().getName();
                     int giftPrice = event.getGift().getDiamondCost();
                     int giftCount = event.getCombo();
-                    System.out.println("Gift added");
+                    logger.info("Gift added: {} worth {} diamonds by {}", giftName, giftPrice, name);
 
                     Users user = userService.findUserByName(name);
                     if (user != null && user.getId() != null) {
@@ -179,7 +183,7 @@ public class TikTokRequest {
                         }
                     }
                 } catch (Exception e) {
-                    System.out.println("Error processing gift: " + e.getMessage());
+                    logger.error("Error processing gift: {}", e.getMessage());
                 }
             });
         });
@@ -200,23 +204,21 @@ public class TikTokRequest {
         winnerSelectionService.calculateWinningChances(allUsers);
     }
 
-
-
     public void getConnected() {
         client.onConnected((liveClient, event) -> {
-            System.out.println("Connected to TikTok Live.");
+            logger.info("Connected to TikTok Live.");
         });
     }
 
     public void getDisconnected() {
         client.onDisconnected((liveClient, event) -> {
-            System.out.println("Disconnected from TikTok Live.");
+            logger.info("Disconnected from TikTok Live.");
         });
     }
 
     public void getError() {
         client.onError((liveClient, event) -> {
-            System.out.println("An error occurred: " + event.getException().getMessage());
+            logger.error("An error occurred: {}", event.getException().getMessage());
         });
     }
 
@@ -227,7 +229,7 @@ public class TikTokRequest {
             byte[] imageBytes = outputStream.toByteArray();
             return Base64.getEncoder().encodeToString(imageBytes);
         } catch (Exception e) {
-            System.out.println("Error converting image to base64: " + e.getMessage());
+            logger.error("Error converting image to base64: {}", e.getMessage());
             return null;
         }
     }
@@ -242,7 +244,7 @@ public class TikTokRequest {
     }
 
     public void startTracking() {
-        System.out.println("TikTok tracking started...");
+        logger.info("TikTok tracking started...");
         isTracking = true;
         resetDatabase();
         if (isConverted) {
@@ -251,16 +253,16 @@ public class TikTokRequest {
     }
 
     public void stopTracking() {
-        System.out.println("TikTok tracking stopped...");
+        logger.info("TikTok tracking stopped...");
 
         isTracking = false;
         isConverted = false;
 
         try {
             client.build().disconnect();
-            System.out.println("Disconnected from TikTok Live.");
+            logger.info("Disconnected from TikTok Live.");
         } catch (Exception e) {
-            System.out.println("Error while disconnecting: " + e.getMessage());
+            logger.error("Error while disconnecting: {}", e.getMessage());
         }
 
         scheduler.shutdown();
@@ -278,14 +280,13 @@ public class TikTokRequest {
             statement.execute(truncateLikes);
             statement.execute(truncateGift);
             statement.execute(truncateUsers);
-            System.out.println("Database tables truncated successfully.");
+            logger.info("Database tables truncated successfully.");
         } catch (SQLException e) {
-            System.out.println("Error truncating database: " + e.getMessage());
+            logger.error("Error truncating database: {}", e.getMessage());
         }
     }
 
     public int getTotalLikes() {
         return totalLikes.get();
     }
-
 }

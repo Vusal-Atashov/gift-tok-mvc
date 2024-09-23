@@ -11,13 +11,15 @@ public class JdbcConnection {
 
     static {
         HikariConfig config = new HikariConfig();
-        config.setJdbcUrl("jdbc:postgresql://localhost:5434/postgres");
+        // Localhost üzərindən PostgreSQL-ə qoşulmaq
+        config.setJdbcUrl("jdbc:postgresql://gift-tok-db:5432/postgres");
         config.setUsername("postgres");
         config.setPassword("postgres");
         config.setMaximumPoolSize(30);
         dataSource = new HikariDataSource(config);
     }
 
+    // Bağlantı almaq üçün metod
     public static Connection getConnection() throws SQLException {
         return dataSource.getConnection();
     }

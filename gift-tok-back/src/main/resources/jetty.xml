@@ -5,6 +5,8 @@
                 <New class="org.eclipse.jetty.server.ServerConnector">
                     <Arg name="server" />
                     <Set name="idleTimeout">600000</Set> <!-- Timeout 10 dəqiqə (600000 ms) -->
+                    <Set name="port">8080</Set> <!-- Jetty 8080 portunda çalışacak -->
+                    <Set name="host">0.0.0.0</Set> <!-- Tüm IP adreslerinden erişime açık -->
                 </New>
             </Item>
         </Array>
