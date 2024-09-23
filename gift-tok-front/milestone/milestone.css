@@ -163,11 +163,14 @@ body {
         margin-top: 20px;
         padding: 15px;
     }
+    .milestone-scroll {
+        max-height: 180px;
+    }
 
     .milestone input {
         padding: 8px;
         font-size: 14px;
-        max-width: 80px;
+        max-width: 120px;
     }
 
     .milestone label {

@@ -95,12 +95,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         // Eğer son milestone geçildiyse bar tamamen dolacak
-        if (currentLikes >= milestones[milestones.length - 1].likes) {
+        if (currentLikes < milestones[0].likes) {
+            likePercentage = 0; // İlk milestone'a ulaşılmadıysa progress bar %0 olmalı
+        } else if (currentLikes >= milestones[milestones.length - 1].likes) {
             likePercentage = 100;
         } else {
-            // Bar yalnızca milestone çizgilerine denk gelecek şekilde ayarlanır
             likePercentage = ((maxReachedMilestoneIndex + 1) / milestones.length) * 100;
         }
+
 
         // Progress bar'ın genişliğini güncelle
         progressBar.style.width = `${likePercentage}%`;
@@ -123,9 +125,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 10 saniyede bir backend'den totalLikes değerini al
     setInterval(() => {
-        fetch('http://localhost:8080/api/v1/like')
+        fetch('http://192.168.1.68:8080/api/v1/like')
             .then(response => {
                 if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
                     throw new Error(`HTTP error! Status: ${response.status}`);
                 }
                 return response.text(); // JSON yoxsa text olaraq oxuyur
@@ -147,7 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 20 saniyede bir backend'den winners verisini al ve UI'yı güncelle
     setInterval(() => {
-        fetch('http://localhost:8080/api/v1/winners')
+        fetch('http://192.168.1.68:8080/api/v1/winners')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -178,13 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => {
                 console.error("Error fetching winners data:", error);
             });
-    }, 20000); // Her 20 saniyede bir bu sorgu çalışacak
+    }, 20000); // Her 50 saniyede bir bu sorgu çalışacak
 
     // Winner seçme butonu işlevi
     if (selectWinnerBtn) {
         selectWinnerBtn.addEventListener('click', function () {
             const currentAward = localStorage.getItem('currentAward');
-            fetch('http://localhost:8080/api/v1/stop-tiktok', {
+            fetch('http://192.168.1.68:8080/api/v1/stop-tiktok', {
                 method: 'GET'
             }).then(response => {
                 if (response.ok) {
@@ -202,7 +205,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Başlangıçta bir kez kazananları al
-    fetch('http://localhost:8080/api/v1/winners')
+    fetch('http://192.168.1.68:8080/api/v1/winners')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

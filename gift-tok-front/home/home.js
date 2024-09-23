@@ -52,17 +52,17 @@ document.addEventListener('DOMContentLoaded', function () {
             event.preventDefault(); // Default link behavior disabled
 
             // Start the fetch process asynchronously
-            fetch('http://localhost:8080/api/v1/start-tiktok', {
+            fetch('http://192.168.1.68:8080/api/v1/start-tiktok', {  // Proxy aracılığıyla backend'e istek
                 method: 'GET'
             })
-            .then(response => response.text())
-            .then(data => {
-                // Handle response, though user is already redirected
-                console.log(data); // You can log it in the console if needed
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
+                .then(response => response.text())
+                .then(data => {
+                    // Handle response, though user is already redirected
+                    console.log(data); // You can log it in the console if needed
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
 
             // Use a short delay before redirecting
             setTimeout(() => {

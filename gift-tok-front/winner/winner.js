@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const usernameElement = document.getElementById('username');
     const giftBoxDiv = document.querySelector('.giftbox');
 
-    const winnerEndpoint = "http://localhost:8080/api/v1/select-winner";
+    const winnerEndpoint = "http://192.168.1.68:8080/api/v1/select-winner";
 
     // Kazananı API'den çek ve dinamik verileri ekle
     function fetchWinner() {
