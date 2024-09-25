@@ -10,28 +10,27 @@ import java.util.List;
 
 public class WinningChanceRepositoryImpl implements WinningChanceRepository {
 
-    private static final String UPSERT_QUERY = "INSERT INTO winning_chances (user_id, total_gift_value, like_count, winning_chance) " +
-            "VALUES (?, ?, ?, ?) " +
+    private static final String UPSERT_QUERY = "INSERT INTO winning_chances (user_id, total_gift_value, winning_chance) " +
+            "VALUES (?, ?, ?) " +
             "ON CONFLICT (user_id) DO UPDATE " +
             "SET total_gift_value = EXCLUDED.total_gift_value, " +
-            "like_count = EXCLUDED.like_count, " +
             "winning_chance = EXCLUDED.winning_chance";
 
-    private static final String SELECT_ALL_QUERY = "SELECT u.id, u.username, u.profile_name, u.picture_base64, wc.total_gift_value, wc.like_count, wc.winning_chance " +
+
+    private static final String SELECT_ALL_QUERY = "SELECT u.id, u.username, u.profile_name, u.picture_base64, wc.total_gift_value, wc.winning_chance " +
             "FROM winning_chances wc " +
             "JOIN users u ON wc.user_id = u.id";
 
     private static final String SELECT_WINNING_CHANCE_QUERY = "SELECT winning_chance FROM winning_chances WHERE user_id = ?";
 
     @Override
-    public void saveWinningChance(Long userId, long totalGiftValue, long likeCount, double winningChance) {
+    public void saveWinningChance(Long userId, long totalGiftValue, double winningChance) {
         try (Connection connection = JdbcConnection.getConnection();
              PreparedStatement stmt = connection.prepareStatement(UPSERT_QUERY)) {
 
             stmt.setLong(1, userId);
             stmt.setLong(2, totalGiftValue);
-            stmt.setLong(3, likeCount);
-            stmt.setDouble(4, winningChance);
+            stmt.setDouble(3, winningChance);
 
             stmt.executeUpdate();
 
@@ -55,7 +54,11 @@ public class WinningChanceRepositoryImpl implements WinningChanceRepository {
                 user.setProfileName(rs.getString("profile_name"));
                 user.setPictureBase64(rs.getString("picture_base64"));
 
-                users.add(user);
+                // Ek bilgi olarak total_gift_value ve winning_chance kontrolü
+                double winningChance = rs.getDouble("winning_chance");
+                if (winningChance > 0) {
+                    users.add(user);
+                }
             }
 
         } catch (SQLException e) {
@@ -63,6 +66,7 @@ public class WinningChanceRepositoryImpl implements WinningChanceRepository {
         }
         return users;
     }
+
 
     @Override
     public double getWinningChanceForUser(Long userId) {

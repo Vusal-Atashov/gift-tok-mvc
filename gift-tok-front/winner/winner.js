@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         fetch(winnerEndpoint)
             .then(response => response.json())
             .then(data => {
-                const currentAward = localStorage.getItem('currentAward') || 100;
+                const currentAward = localStorage.getItem('currentAward') || 0;
 
                 // Dinamik verileri HTML'e ekle
                 prizeElement.innerHTML = `$${currentAward}`;

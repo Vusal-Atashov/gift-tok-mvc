@@ -11,6 +11,24 @@ body {
     background-color: #f4f4f4;
     box-sizing: border-box;
 }
+.user-name{
+    width: 279px;
+    height: 36.5px;
+    max-width: 360px;
+    color: black;
+    border-radius: 30px;
+    padding-left: 15px;
+    border: 2px solid black;
+}
+.user-input{
+    margin-bottom: 20px;
+    align-items: center;
+    display: flex;
+}
+.user-name::placeholder{
+    color: black;
+}
+
 
 /* Container to center content vertically */
 .container {
@@ -35,7 +53,6 @@ body {
     width: 100%; /* Make logo responsive */
     max-width: 350px; /* Limit logo width */
     height: auto; /* Maintain aspect ratio */
-    margin-bottom: 20px; /* Add space between logo and buttons */
 }
 
 .logo img {
@@ -45,7 +62,7 @@ body {
 
 /* Mood Switcher Container */
 .mood-switcher {
-    margin: 20px 0;
+    margin: 10px 0;
     display: flex;
     gap: 10px;
 }
@@ -110,6 +127,15 @@ body {
 .dark-mode .mood-btn:hover {
     background-color: #333; /* Darker hover effect */
 }
+.dark-mode .user-name{
+    background-color: black;
+    color: white;
+
+}
+.dark-mode .user-name::placeholder{
+    color: white;
+
+}
 
 /* Mobil uyumluluk için medya sorgusu */
 @media (max-width: 600px) {
@@ -126,13 +152,15 @@ body {
     }
 
     .mood-switcher {
-        flex-direction: column; /* Butonları dikey hizala */
-        gap: 15px; /* Aralarındaki boşluk arttırıldı */
+        flex-direction: row; /* Ensure buttons are side by side */
+        gap: 10px;
     }
 
     .mood-btn {
-        padding: 8px 20px; /* Daha küçük buton boyutları */
-        font-size: 14px; /* Daha küçük yazı boyutu */
+        padding: 8px 15px; /* Adjust button size for mobile */
+        font-size: 14px;
+        width: auto; /* Let the width adjust automatically */
+        white-space: nowrap; /* Prevent text wrapping */
     }
 
     .create-game-btn {

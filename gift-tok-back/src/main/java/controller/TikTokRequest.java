@@ -2,19 +2,13 @@ package controller;
 
 import config.JdbcConnection;
 import domain.entity.Gift;
-import domain.entity.Like;
 import domain.entity.Users;
 import domain.repository.impl.GiftRepositoryImpl;
-import domain.repository.impl.LikeRepositoryImpl;
 import domain.repository.impl.UserRepositoryImpl;
 import domain.repository.impl.WinningChanceRepositoryImpl;
-import io.github.jwdeveloper.tiktok.TikTokLiveClient;
-import io.github.jwdeveloper.tiktok.live.LiveClient;
 import service.GiftService;
-import service.LikeService;
 import service.UserService;
 import service.impl.GiftServiceImpl;
-import service.impl.LikeServiceImpl;
 import service.impl.UserServiceImpl;
 import service.impl.WinnerSelectionServiceImpl;
 import io.github.jwdeveloper.tiktok.TikTokLive;
@@ -29,10 +23,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Base64;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,38 +33,38 @@ import org.slf4j.LoggerFactory;
 
 public class TikTokRequest {
 
-    private static final Logger logger = LoggerFactory.getLogger(TikTokRequest.class); // SLF4J Logger
+    private static final Logger logger = LoggerFactory.getLogger(TikTokRequest.class);
 
     private final UserService userService;
-    private final LikeService likeService;
     private final GiftService giftService;
-    private final AtomicInteger totalLikes;
+    private final AtomicInteger totalLikes = new AtomicInteger(0);
     private final WinnerSelectionServiceImpl winnerSelectionService;
-    private final LiveClientBuilder client;
+    private LiveClientBuilder client;
     private int eventCount = 0;
     private static final int BATCH_SIZE = 10;
     private final ScheduledExecutorService scheduler;
-    private final BlockingQueue<Like> likeQueue = new LinkedBlockingQueue<>();
     private boolean isTracking = true;
-    private boolean isConverted = true;
+    private boolean isConnected = true;
 
     public TikTokRequest() {
         this.userService = new UserServiceImpl(new UserRepositoryImpl());
-        this.likeService = new LikeServiceImpl(new LikeRepositoryImpl());
         this.giftService = new GiftServiceImpl(new GiftRepositoryImpl());
-        this.winnerSelectionService = new WinnerSelectionServiceImpl(giftService, likeService, userService, new WinningChanceRepositoryImpl());
-        this.client = TikTokLive.newClient("semka__live");
-        this.totalLikes = new AtomicInteger(0);  // totalLikes üçün düzgün təşkiledici
+        this.winnerSelectionService = new WinnerSelectionServiceImpl(giftService, userService, new WinningChanceRepositoryImpl());
         scheduler = Executors.newScheduledThreadPool(1);
-        scheduler.scheduleAtFixedRate(this::updateChances, 0, 20, TimeUnit.SECONDS);
+        scheduler.scheduleAtFixedRate(this::updateChances, 0, 2, TimeUnit.SECONDS);
     }
 
     public void connectClient() {
+        if (client == null) {
+            logger.error("TikTok client is not set. Please set a username first.");
+            return;
+        }
+
         int maxRetries = 5;
         int retryDelay = 5000;
         for (int i = 0; i < maxRetries; i++) {
             try {
-                if (isConverted) {
+                if (isConnected) {
                     client.buildAndConnect();
                     logger.info("Successfully connected to TikTok Live.");
                 }
@@ -84,10 +76,10 @@ public class TikTokRequest {
                     try {
                         Thread.sleep(retryDelay);
                     } catch (InterruptedException interruptedException) {
-                        logger.error("Interrupted during retry delay: {}", interruptedException.getMessage());
+                        logger.error("Retry wait interrupted: {}", interruptedException.getMessage());
                     }
                 } else {
-                    logger.error("Maximum retry attempts reached. Could not connect.");
+                    logger.error("Max retries reached. Unable to connect.");
                 }
             }
         }
@@ -96,7 +88,6 @@ public class TikTokRequest {
     private void setupListeners() {
         getConnected();
         getGifts();
-        getLikes();
         getError();
 
         client.onRoomInfo((liveClient, event) -> {
@@ -105,58 +96,11 @@ public class TikTokRequest {
         });
     }
 
-    public void getLikes() {
-        client.onLike((liveClient, event) -> {
-            CompletableFuture.runAsync(() -> {
-                if (!isTracking) return;
-
-                try {
-                    String name = event.getUser().getName();
-                    long likes = event.getLikes();
-                    logger.info("Like added: {} by {}", likes, name);
-
-                    Users user = userService.findUserByName(name);
-                    if (user != null && user.getId() != null) {
-                        Like like = new Like(user.getId(), likes);
-                        likeQueue.add(like);
-                        processLikeQueue();
-                    } else {
-                        String profileName = event.getUser().getProfileName();
-                        Image picture = event.getUser().getPicture().downloadImage();
-                        Users newUser = new Users(name, profileName, convertToBase64(picture));
-                        Users createdUser = userService.saveUser(newUser);
-
-                        if (createdUser != null && createdUser.getId() != null) {
-                            Like like = new Like(createdUser.getId(), likes);
-                            likeQueue.add(like);
-                            processLikeQueue();
-                        }
-                    }
-                } catch (Exception e) {
-                    logger.error("Error processing likes: {}", e.getMessage());
-                }
-            });
-        });
-    }
-
-    private void processLikeQueue() {
-        if (likeQueue.size() >= BATCH_SIZE) {
-            List<Like> batch = new java.util.ArrayList<>();
-            likeQueue.drainTo(batch, BATCH_SIZE);
-
-            CompletableFuture.runAsync(() -> {
-                for (Like like : batch) {
-                    likeService.saveLike(like);
-                }
-                logger.info("Processed batch of likes: {}", batch.size());
-            });
-        }
-    }
-
     public void getGifts() {
+        logger.info("Setting up gift listener...");
         client.onGift((liveClient, event) -> {
             CompletableFuture.runAsync(() -> {
-                if (!isTracking) return;  // İzləmə dayandırılıbsa, hədiyyələri işləmə
+                if (!isTracking) return;
 
                 try {
                     String giftName = event.getGift().getName();
@@ -198,7 +142,7 @@ public class TikTokRequest {
     }
 
     public void updateChances() {
-        if (!isTracking) return;  // İzləmə dayandırılıbsa, davam etmə
+        if (!isTracking) return;
 
         List<Users> allUsers = userService.getAllUsers();
         winnerSelectionService.calculateWinningChances(allUsers);
@@ -210,15 +154,9 @@ public class TikTokRequest {
         });
     }
 
-    public void getDisconnected() {
-        client.onDisconnected((liveClient, event) -> {
-            logger.info("Disconnected from TikTok Live.");
-        });
-    }
-
     public void getError() {
         client.onError((liveClient, event) -> {
-            logger.error("An error occurred: {}", event.getException().getMessage());
+            logger.error("Error occurred: {}", event.getException().getMessage());
         });
     }
 
@@ -243,20 +181,31 @@ public class TikTokRequest {
         return bufferedImage;
     }
 
+    public void addUsername(String username) {
+        logger.info("Adding TikTok username: {}", username);
+        this.client = TikTokLive.newClient(username);  // Username TikTok client'ı oluşturuyor
+    }
+
     public void startTracking() {
-        logger.info("TikTok tracking started...");
+        if (client == null) {
+            logger.error("TikTok client not set. Please add a username.");
+            return;
+        }
+        logger.info("Starting TikTok live tracking...");
         isTracking = true;
         resetDatabase();
-        if (isConverted) {
-            connectClient();
-        }
+
+        connectClient();  // TikTok ile bağlantı kuruluyor
     }
+
+
+
 
     public void stopTracking() {
         logger.info("TikTok tracking stopped...");
 
         isTracking = false;
-        isConverted = false;
+        isConnected = false;
 
         try {
             client.build().disconnect();
@@ -264,20 +213,17 @@ public class TikTokRequest {
         } catch (Exception e) {
             logger.error("Error while disconnecting: {}", e.getMessage());
         }
-
         scheduler.shutdown();
     }
 
     public void resetDatabase() {
         String truncateWinningChances = "TRUNCATE TABLE winning_chances CASCADE";
-        String truncateLikes = "TRUNCATE TABLE likes CASCADE";
         String truncateGift = "TRUNCATE TABLE gift CASCADE";
         String truncateUsers = "TRUNCATE TABLE users CASCADE";
 
         try (Connection connection = JdbcConnection.getConnection();
              Statement statement = connection.createStatement()) {
             statement.execute(truncateWinningChances);
-            statement.execute(truncateLikes);
             statement.execute(truncateGift);
             statement.execute(truncateUsers);
             logger.info("Database tables truncated successfully.");

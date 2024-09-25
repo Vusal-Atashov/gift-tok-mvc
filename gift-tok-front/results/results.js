@@ -29,9 +29,9 @@ document.addEventListener('DOMContentLoaded', () => {
     milestones.forEach((milestoneData, index) => {
         const milestoneSpan = document.createElement('span');
         milestoneSpan.textContent = `$${milestoneData.milestone}`;
-        if (index === 0) {
-            milestoneSpan.classList.add('active'); // İlk milestone aktif olarak gösterilir
-        }
+        // if (index === 0) {
+        //     milestoneSpan.classList.add('active'); // İlk milestone aktif olarak gösterilir
+        // }
         milestoneIndicators.appendChild(milestoneSpan);
 
         const likeSpan = document.createElement('span');
@@ -58,11 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Like göstergesi için hizalama
         const likeSpan = likeIndicators.children[index];
-        likeSpan.style.left = `${likePercentage-7}%`;
+        likeSpan.style.left = `${likePercentage-10}%`;
 
         // Milestone göstergesi için hizalama
         const milestoneSpan = milestoneIndicators.children[index];
-        milestoneSpan.style.left = `${likePercentage-5}%`;
+        milestoneSpan.style.left = `${likePercentage-10}%`;
     });
 
 
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 console.error("Error fetching total likes:", error);
             });
 
-    }, 10000);
+    }, 3000);
 
     // 20 saniyede bir backend'den winners verisini al ve UI'yı güncelle
     setInterval(() => {
@@ -181,7 +181,7 @@ document.addEventListener('DOMContentLoaded', () => {
             .catch(error => {
                 console.error("Error fetching winners data:", error);
             });
-    }, 20000); // Her 50 saniyede bir bu sorgu çalışacak
+    }, 800);
 
     // Winner seçme butonu işlevi
     if (selectWinnerBtn) {

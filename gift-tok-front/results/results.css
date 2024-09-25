@@ -19,27 +19,33 @@ body {
     padding: 20px;
     background-color: white;
     border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     box-sizing: border-box;
     position: relative;
     text-align: center;
 }
 
-.milestone-indicators, .like-indicators {
+.milestone-indicators,
+.like-indicators {
     display: flex;
     justify-content: space-between;
     margin: 10px 0;
     position: relative;
     width: 100%;
+    white-space: nowrap;
 }
 
-.milestone-indicators span, .like-indicators span {
+.milestone-indicators span,
+.like-indicators span {
     font-size: 14px;
     color: #333;
     position: absolute;
     transform: translateX(-50%);
-    white-space: nowrap;
     padding: 0 5px;
+    max-width: 80px; /* Metin uzunluğunu sınırlandır */
+    overflow: hidden; /* Taşmayı gizle */
+    text-overflow: ellipsis; /* Çok uzun metinlerde üç nokta koy */
+    white-space: nowrap; /* Metnin bir satıra sığması için */
 }
 
 .milestone-indicators span.active {
@@ -142,6 +148,9 @@ body {
 
 .amount {
     font-weight: bold;
+    white-space: nowrap; /* Tek satırda kal */
+    overflow: hidden; /* Taşan metinleri gizle */
+    text-overflow: ellipsis; /* Taşan metinler için üç nokta */
 }
 
 .container {
@@ -190,7 +199,8 @@ body {
     background-color: #06b216;
 }
 
-.dark-mode .milestone-indicators span, .dark-mode .like-indicators span {
+.dark-mode .milestone-indicators span,
+.dark-mode .like-indicators span {
     color: white;
 }
 
@@ -213,11 +223,13 @@ body {
         max-width: 100%;
         padding: 15px;
     }
+
     .scroll-container {
         max-height: 180px;
     }
 
-    .milestone-indicators span, .like-indicators span {
+    .milestone-indicators span,
+    .like-indicators span {
         font-size: 12px;
     }
 

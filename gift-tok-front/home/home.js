@@ -1,75 +1,80 @@
 document.addEventListener('DOMContentLoaded', function () {
     const darkBtn = document.getElementById('darkBtn');
     const lightBtn = document.getElementById('lightBtn');
-    const body = document.body;
-    const logoImages = document.querySelectorAll('.logo img'); // Select all logo images
+    const createGameBtn = document.querySelector('.create-game-btn');
+    const usernameInput = document.querySelector('.user-name');
 
-    // Function to toggle logo visibility based on the mode
+    if (!darkBtn || !lightBtn || !createGameBtn || !usernameInput) {
+        console.error("Some elements are missing.");
+        return;
+    }
+
+    // Logo toggle funksiyası
     function toggleLogo(mode) {
-        if (logoImages.length >= 2) { // Ensure there are at least two logos
+        const logoImages = document.querySelectorAll('.logo img');
+        if (logoImages.length >= 2) {
             if (mode === 'dark') {
-                logoImages[0].style.display = 'block'; // Show dark mode logo
-                logoImages[1].style.display = 'none';  // Hide light mode logo
+                logoImages[0].style.display = 'block';
+                logoImages[1].style.display = 'none';
             } else {
-                logoImages[0].style.display = 'none';  // Hide dark mode logo
-                logoImages[1].style.display = 'block'; // Show light mode logo
+                logoImages[0].style.display = 'none';
+                logoImages[1].style.display = 'block';
             }
-        } else {
-            console.error('Insufficient logos found');
         }
     }
 
-    // Set mode in localStorage and apply it
     function setMode(mode) {
-        localStorage.setItem('mode', mode); // Save mode in localStorage
-        body.classList.remove('dark-mode', 'light-mode');
-        body.classList.add(`${mode}-mode`);
+        localStorage.setItem('mode', mode);
+        document.body.classList.remove('dark-mode', 'light-mode');
+        document.body.classList.add(`${mode}-mode`);
         toggleLogo(mode);
     }
 
-    // Dark mode button event listener
-    if (darkBtn) {
-        darkBtn.addEventListener('click', () => {
-            setMode('dark');
-        });
-    }
+    darkBtn.addEventListener('click', () => setMode('dark'));
+    lightBtn.addEventListener('click', () => setMode('light'));
 
-    // Light mode button event listener
-    if (lightBtn) {
-        lightBtn.addEventListener('click', () => {
-            setMode('light');
-        });
-    }
+    const savedMode = localStorage.getItem('mode') || 'light';
+    setMode(savedMode);
 
-    // Check for saved mode in localStorage on page load
-    const savedMode = localStorage.getItem('mode') || 'light'; // Default to light mode
-    setMode(savedMode); // Apply saved mode
+    createGameBtn.addEventListener('click', (event) => {
+        event.preventDefault();
 
-    const createGameBtn = document.querySelector('.create-game-btn');
+        const username = usernameInput.value.trim();
+        if (!username) {
+            console.error("İstifadəçi adı boş ola bilməz!");
+            return;
+        }
 
-    if (createGameBtn) {
-        createGameBtn.addEventListener('click', (event) => {
-            event.preventDefault(); // Default link behavior disabled
-
-            // Start the fetch process asynchronously
-            fetch('http://192.168.1.68:8080/api/v1/start-tiktok', {  // Proxy aracılığıyla backend'e istek
-                method: 'GET'
+        // Arka planda çalışacak istekler
+        fetch('http://192.168.1.68:8080/api/v1/submit-username', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: username })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Kullanıcı adı gönderilirken hata oluştu.");
+                }
+                return response.json();
             })
-                .then(response => response.text())
-                .then(data => {
-                    // Handle response, though user is already redirected
-                    console.log(data); // You can log it in the console if needed
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
+            .then(submitData => {
+                console.log('Kullanıcı adı başarıyla gönderildi:', submitData);
 
-            // Use a short delay before redirecting
-            setTimeout(() => {
-                window.location.href = "milestone/milestone.html";
-            }, 100); // Adjust the delay as needed
-        });
-    } else {
-        console.error('Create game button not found');
-    }
+                return fetch('http://192.168.1.68:8080/api/v1/start-tiktok', {
+                    method: 'GET'
+                });
+            })
+            .then(startResponse => startResponse.text())
+            .then(startData => {
+                console.log('TikTok izleme başlatıldı:', startData);
+            })
+            .catch(error => {
+                console.error('Hata oluştu:', error);
+            });
+
+        // Yönlendirme hemen gerçekleşiyor
+        setTimeout(() => window.location.href = "milestone/milestone.html", 100);
+    });
 });

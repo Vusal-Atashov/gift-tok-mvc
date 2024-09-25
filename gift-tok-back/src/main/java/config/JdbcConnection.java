@@ -11,7 +11,6 @@ public class JdbcConnection {
 
     static {
         HikariConfig config = new HikariConfig();
-        // Localhost üzərindən PostgreSQL-ə qoşulmaq
         config.setJdbcUrl("jdbc:postgresql://gift-tok-db:5432/postgres");
         config.setUsername("postgres");
         config.setPassword("postgres");
