@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Arka planda çalışacak istekler
-        fetch('http://192.168.1.68:8080/api/v1/submit-username', {
+        fetch('http://185.227.111.34:8080/api/v1/submit-username', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
             .then(submitData => {
                 console.log('Kullanıcı adı başarıyla gönderildi:', submitData);
 
-                return fetch('http://192.168.1.68:8080/api/v1/start-tiktok', {
+                return fetch('http://185.227.111.34:8080/api/v1/start-tiktok', {
                     method: 'GET'
                 });
             })
