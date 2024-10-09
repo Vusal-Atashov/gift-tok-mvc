@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
     const body = document.body;
 
-    // Dark mode seçimini kontrol et ve uygula
+    // Dark mode seçimini kontrol et və uygula
     const savedMode = localStorage.getItem('mode') || 'light';
     body.classList.remove('dark-mode', 'light-mode');
     body.classList.add(`${savedMode}-mode`);
@@ -43,6 +43,19 @@ document.addEventListener("DOMContentLoaded", function() {
     rewardCard.appendChild(messageContainer);
     rewardCard.appendChild(profileContainer);
 
+    // Restart düyməsi yaradaraq əlavə edirik
+    const restartContainer = document.createElement('div');
+    restartContainer.classList.add('restart-container');
+
+    const restartButton = document.createElement('button');
+    restartButton.id = 'restartButton';
+    restartButton.classList.add('restart-button');
+    restartButton.textContent = 'Restart';
+
+    // Restart düyməsini konteynerə əlavə edirik və kartın sonuna yerləşdiririk
+    restartContainer.appendChild(restartButton);
+    rewardCard.appendChild(restartContainer);
+
     // Hazır kartı əsas konteynerə əlavə edirik
     rewardCardContainer.appendChild(rewardCard);
 
@@ -57,4 +70,9 @@ document.addEventListener("DOMContentLoaded", function() {
     // GSAP ilə animasiya tətbiq edirik
     gsap.fromTo(profileImage, { opacity: 0 }, { opacity: 1, duration: 1.5, delay: 0.5 });
     gsap.fromTo(username, { opacity: 0 }, { opacity: 1, duration: 1.5, delay: 1 });
+
+    // Restart düyməsi üçün click event əlavə edirik
+    restartButton.addEventListener('click', function() {
+        window.location.href = '../index.html'; // index.html səhifəsinə yönləndiririk
+    });
 });

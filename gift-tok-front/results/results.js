@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', () => {
         milestoneIndicators.appendChild(milestoneSpan);
 
         const likeSpan = document.createElement('span');
-        likeSpan.textContent = `${milestoneData.likes}K ${heartEmoji}`;
+        likeSpan.textContent = `${milestoneData.likes} ${heartEmoji}`;
         likeIndicators.appendChild(likeSpan);
     });
 
@@ -42,9 +42,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Milestone sayısına göre her bir milestone'un yüzde pozisyonunu hesapla
         if (milestones.length === 1) {
-            likePercentage = 100; // Tek milestone varsa %100'de olmalı
+            likePercentage = 99; // Tek milestone varsa %99'de olmalı
         } else {
-            likePercentage = ((index + 1) / milestones.length) * 100; // Diğer milestone'lar orantılı olarak yerleştirilecek
+            likePercentage = ((index + 1) / milestones.length) * 99; // Diğer milestone'lar orantılı olarak yerleştirilecek
         }
 
         // Milestone işaretçisini konumlandırma
@@ -93,9 +93,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (currentLikes < milestones[0].likes) {
             likePercentage = 0; // İlk milestone'a ulaşılmadıysa progress bar %0 olmalı
         } else if (currentLikes >= milestones[milestones.length - 1].likes) {
-            likePercentage = 100;
+            likePercentage = 99;
         } else {
-            likePercentage = ((maxReachedMilestoneIndex + 1) / milestones.length) * 100;
+            likePercentage = ((maxReachedMilestoneIndex + 1) / milestones.length) * 99;
         }
 
         // Progress bar'ın genişliğini güncelle

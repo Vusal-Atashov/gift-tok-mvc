@@ -1,16 +1,14 @@
 package controller;
 
 import domain.entity.Users;
-import io.github.jwdeveloper.tiktok.data.settings.LiveClientSettings;
-import io.github.jwdeveloper.tiktok.http.HttpClientFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import service.TikTokDataService;
 import service.WinnerSelectionService;
 import service.impl.GiftServiceImpl;
@@ -39,7 +37,8 @@ public class TikTokControllerServlet extends HttpServlet {
         winnerSelectionService = new WinnerSelectionServiceImpl(
                 new GiftServiceImpl(new GiftRepositoryImpl()),
                 new UserServiceImpl(new UserRepositoryImpl()),
-                new WinningChanceRepositoryImpl());
+                new WinningChanceRepositoryImpl()
+        );
     }
 
     @Override
