@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 10 saniyede bir backend'den totalLikes değerini al
     setInterval(() => {
-        fetch('http://192.168.1.68:8080/api/v1/like')
+        fetch('http://185.227.111.34:8080/api/v1/like')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 20 saniyede bir backend'den winners verisini al ve UI'yı güncelle
     setInterval(() => {
-        fetch('http://192.168.1.68:8080/api/v1/winners')
+        fetch('http://185.227.111.34:8080/api/v1/winners')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (selectWinnerBtn) {
         selectWinnerBtn.addEventListener('click', function () {
             const currentAward = localStorage.getItem('currentAward');
-            fetch('http://192.168.1.68:8080/api/v1/stop-tiktok', {
+            fetch('http://185.227.111.34:8080/api/v1/stop-tiktok', {
                 method: 'GET'
             }).then(response => {
                 if (response.ok) {
@@ -201,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Başlangıçta bir kez kazananları al
-    fetch('http://192.168.1.68:8080/api/v1/winners')
+    fetch('http://185.227.111.34:8080/api/v1/winners')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);

@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Kullanıcı adı gönderme isteği
-        fetch('http://192.168.1.68:8080/api/v1/start-tiktok', {
+        fetch('http://185.227.111.34:8080/api/v1/start-tiktok', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
