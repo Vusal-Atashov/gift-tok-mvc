@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    // Logo toggle funksiyası
+    // Logo toggle fonksiyonu
     function toggleLogo(mode) {
         const logoImages = document.querySelectorAll('.logo img');
         if (logoImages.length >= 2) {
@@ -41,40 +41,31 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const username = usernameInput.value.trim();
         if (!username) {
-            console.error("İstifadəçi adı boş ola bilməz!");
+            console.error("Kullanıcı adı boş olamaz!");
             return;
         }
 
-        // Arka planda çalışacak istekler
-        fetch('http://185.227.111.34:8080/api/v1/submit-username', {
+        // Kullanıcı adı gönderme isteği
+        fetch('http://192.168.1.68:8080/api/v1/start-tiktok', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({ username: username })
-        })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Kullanıcı adı gönderilirken hata oluştu.");
-                }
-                return response.json();
-            })
-            .then(submitData => {
-                console.log('Kullanıcı adı başarıyla gönderildi:', submitData);
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error("Kullanıcı adı gönderilirken hata oluştu.");
+            }
+            return response.json();
+        }).then(data => {
+            console.log('TikTok takibi başarıyla başlatıldı:', data);
+        }).catch(error => {
+            console.error('Hata oluştu:', error);
+        });
 
-                return fetch('http://185.227.111.34:8080/api/v1/start-tiktok', {
-                    method: 'GET'
-                });
-            })
-            .then(startResponse => startResponse.text())
-            .then(startData => {
-                console.log('TikTok izleme başlatıldı:', startData);
-            })
-            .catch(error => {
-                console.error('Hata oluştu:', error);
-            });
-
-        // Yönlendirme hemen gerçekleşiyor
-        setTimeout(() => window.location.href = "milestone/milestone.html", 100);
+        // İsteği beklemeden hemen yönlendirme
+        setTimeout(() => {
+            window.location.href = "milestone/milestone.html";
+        }, 100); // 100ms gecikme ekleyerek isteğin başlamasını garanti ediyoruz
     });
 });

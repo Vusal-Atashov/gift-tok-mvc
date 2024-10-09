@@ -29,9 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
     milestones.forEach((milestoneData, index) => {
         const milestoneSpan = document.createElement('span');
         milestoneSpan.textContent = `$${milestoneData.milestone}`;
-        // if (index === 0) {
-        //     milestoneSpan.classList.add('active'); // İlk milestone aktif olarak gösterilir
-        // }
         milestoneIndicators.appendChild(milestoneSpan);
 
         const likeSpan = document.createElement('span');
@@ -64,8 +61,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const milestoneSpan = milestoneIndicators.children[index];
         milestoneSpan.style.left = `${likePercentage-10}%`;
     });
-
-
 
     // Ödül hesaplama fonksiyonu
     function calculateAward(currentLikes) {
@@ -103,7 +98,6 @@ document.addEventListener('DOMContentLoaded', () => {
             likePercentage = ((maxReachedMilestoneIndex + 1) / milestones.length) * 100;
         }
 
-
         // Progress bar'ın genişliğini güncelle
         progressBar.style.width = `${likePercentage}%`;
 
@@ -125,32 +119,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 10 saniyede bir backend'den totalLikes değerini al
     setInterval(() => {
-        fetch('http://185.227.111.34:8080/api/v1/like')
+        fetch('http://192.168.1.68:8080/api/v1/like')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
-                    throw new Error(`HTTP error! Status: ${response.status}`);
                 }
-                return response.text(); // JSON yoxsa text olaraq oxuyur
+                return response.text(); // JSON değilse text olarak oku
             })
             .then(text => {
+                if (!text || text.trim() === "") {
+                    throw new Error("Boş bir yanıt alındı");
+                }
+
                 try {
-                    const data = JSON.parse(text); // JSON-a çevirməyi burda edirik
+                    const data = JSON.parse(text); // JSON'a çevirme işlemi burada yapılıyor
                     const currentLikes = data.total_likes || 0;
                     updateLikes(currentLikes);
                 } catch (e) {
-                    console.error("Invalid JSON:", e, text); // JSON formatı düzgün deyilsə, xəta verilir
+                    console.error("Geçersiz JSON formatı:", e, text);
                 }
             })
             .catch(error => {
                 console.error("Error fetching total likes:", error);
             });
-
     }, 3000);
 
     // 20 saniyede bir backend'den winners verisini al ve UI'yı güncelle
     setInterval(() => {
-        fetch('http://185.227.111.34:8080/api/v1/winners')
+        fetch('http://192.168.1.68:8080/api/v1/winners')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! Status: ${response.status}`);
@@ -187,7 +183,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (selectWinnerBtn) {
         selectWinnerBtn.addEventListener('click', function () {
             const currentAward = localStorage.getItem('currentAward');
-            fetch('http://185.227.111.34:8080/api/v1/stop-tiktok', {
+            fetch('http://192.168.1.68:8080/api/v1/stop-tiktok', {
                 method: 'GET'
             }).then(response => {
                 if (response.ok) {
@@ -205,7 +201,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // Başlangıçta bir kez kazananları al
-    fetch('http://185.227.111.34:8080/api/v1/winners')
+    fetch('http://192.168.1.68:8080/api/v1/winners')
         .then(response => {
             if (!response.ok) {
                 throw new Error(`HTTP error! Status: ${response.status}`);
